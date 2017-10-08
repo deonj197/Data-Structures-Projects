@@ -1,0 +1,14 @@
+2
+3
+A 2 B C
+B 1 A
+C 1 A
+8
+A 2 B F
+B 3 A G C
+C 2 B D
+D 3 C G E
+E 2 D H
+F 3 A G H
+G 3 B F D
+H 2 F E
