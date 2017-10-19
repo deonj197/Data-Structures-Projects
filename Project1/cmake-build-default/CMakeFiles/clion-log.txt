@@ -1,0 +1,4 @@
+"C:\Program Files\JetBrains\CLion 2017.2.2\bin\cmake\bin\cmake.exe" -DCMAKE_BUILD_TYPE= -G "CodeBlocks - MinGW Makefiles" "C:\Users\deonj\Documents\CIS 350\Proj1"
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Users/deonj/Documents/CIS 350/Proj1/cmake-build-default
