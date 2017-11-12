@@ -62,45 +62,71 @@ void Graph::addLoon(Loon *loon) {
 }
 
 void Graph::visitClosestTwoStations(Loon *loon) {
-    Loon *otherLoon1;
-    Loon *otherLoon2;
+    Loon *otherLoon1 = new Loon(100,100);
+    Loon *otherLoon2 = new Loon(100,100);
     double minDistance = 100;
     double distToNextLoon;
 
     for (auto nextLoon : loons) {
-        distToNextLoon = sqrt(
-                pow((nextLoon->xCord - loon->xCord), 2) +
-                pow((nextLoon->yCord - loon->yCord), 2)
-        );
-        if (distToNextLoon < minDistance) {
-            if (nextLoon->xCord != loon->xCord && nextLoon->yCord != loon->yCord) {
+        if (nextLoon->xCord != loon->xCord || nextLoon->yCord != loon->yCord) {
+            distToNextLoon = sqrt(
+                    pow((nextLoon->xCord - loon->xCord), 2) +
+                    pow((nextLoon->yCord - loon->yCord), 2)
+            );
+            if (distToNextLoon < minDistance) {
                 minDistance = distToNextLoon;
                 otherLoon1 = nextLoon;
+            } else if (distToNextLoon == minDistance) {
+                if (nextLoon->xCord < otherLoon1->xCord) {
+                    otherLoon1 = nextLoon;
+                } else if (nextLoon->xCord == otherLoon1->xCord) {
+                    if (nextLoon->yCord < otherLoon1->yCord) {
+                        otherLoon1 = nextLoon;
+                    }
+                }
             }
         }
     }
     minDistance = 100;
     for (auto nextLoon : loons) {
-        distToNextLoon = sqrt(
-                pow((nextLoon->xCord - loon->xCord), 2) +
-                pow((nextLoon->yCord - loon->yCord), 2)
-        );
-        if (distToNextLoon < minDistance) {
-            if (nextLoon->xCord != otherLoon1->xCord && nextLoon->yCord != otherLoon1->yCord &&
-                nextLoon->xCord != loon->xCord && nextLoon->yCord != loon->yCord) {
+        if ((nextLoon->xCord != loon->xCord || nextLoon->yCord != loon->yCord) &&
+                (nextLoon->xCord != otherLoon1->xCord || nextLoon->yCord != otherLoon1->yCord)) {
+            distToNextLoon = sqrt(
+                    pow((nextLoon->xCord - loon->xCord), 2) +
+                    pow((nextLoon->yCord - loon->yCord), 2)
+            );
+            if (distToNextLoon < minDistance) {
                 minDistance = distToNextLoon;
                 otherLoon2 = nextLoon;
+            } else if (distToNextLoon == minDistance) {
+                if (nextLoon->xCord < otherLoon2->xCord) {
+                    otherLoon2 = nextLoon;
+                } else if (nextLoon->xCord == otherLoon2->xCord) {
+                    if (nextLoon->yCord < otherLoon2->yCord) {
+                        otherLoon2 = nextLoon;
+                    }
+                }
             }
         }
     }
+    if (!otherLoon1->visited) {
+        otherLoon1->visited = true;
+        visitClosestTwoStations(otherLoon1);
+    }
 
-    (*otherLoon1).visited = true;
-    (*otherLoon2).visited = true;
+    if (!otherLoon2->visited) {
+        otherLoon2->visited = true;
+        visitClosestTwoStations(otherLoon2);
+    }
 }
 
 string Graph::determineIfAllCanBeReached() {
     for (auto loon : loons) {
-        visitClosestTwoStations(loon);
+        if (loon->startingPos) {
+            visitClosestTwoStations(loon);
+            break;
+        }
+
     }
     for (auto loon : loons) {
         if (!loon->visited) {
@@ -125,16 +151,17 @@ int main() {
     cin >> numOfPairs;
     Graph graph{numOfPairs};
 
-    for (int i = 0; i < numOfPairs; i++) {
-        loon = new Loon();
-        cin >> xVal >> yVal;
-        loon->xCord = xVal;
-        loon->yCord = yVal;
-        loon->startingPos = (i == 0);
-        loon->visited = (i == 0);
-        graph.addLoon(loon);
+    while (numOfPairs) {
+        graph = Graph{numOfPairs};
+        for (int i = 0; i < numOfPairs; i++) {
+            cin >> xVal >> yVal;
+            loon = new Loon(xVal, yVal);
+            loon->startingPos = (i == 0);
+            loon->visited = (i == 0);
+            graph.addLoon(loon);
+        }
+        cout << graph.determineIfAllCanBeReached() << endl;
+        cin >> numOfPairs;
     }
 
-    cout << graph.determineIfAllCanBeReached() << endl;
-    graph.printGraph();
 }
